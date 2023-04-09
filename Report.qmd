@@ -1,0 +1,66 @@
+---
+title: "ICU Status Report"
+author: "Yixun Chen"
+format: html
+editor: visual
+excute:
+echo: false
+message: false
+warning: false
+---
+
+#### Time and Date of Report
+
+```{r}
+time <- Sys.time()
+```
+
+```{r}
+library(tidyverse)
+library(googledrive)
+library(kableExtra)
+library(plotly)
+library(lubridate)
+library(knitr)
+library(ggplot2)
+source("sepsis_monitor_functions.R")
+```
+
+```{r}
+id <- "1sa9YFpnX9P6p9Io1kzmJ9x6My66qtPMw"
+## All data up until now
+new_data <- read.csv(sprintf("https://docs.google.com/uc?id=%s&export=download", id))
+## Include only most recent data
+most_recent_data <- new_data %>%
+  group_by(PatientID) %>%
+  filter(obsTime == max(obsTime))
+```
+
+#### A table listing the patients who currently have sepsis (if any), along with their most recent heart rate, temperature, and respiratory rate
+
+```{r}
+sepsis <- most_recent_data %>% 
+  subset(most_recent_data$SepsisLabel == 1) 
+
+table1 <- sepsis %>%
+  select("Patient ID" = PatientID, "Heart Rate" = HR, "Temperature" = Temp, "Respiratory Rate" = Resp) %>% 
+  kable() 
+table1
+
+```
+
+#### Plots for all patients who have sepsis (if any) that show the complete history of their heart rate, temperature, and respiratory rate during their time in the ICU. 
+
+```{r}
+ggplot(sepsis, aes(x = ICULOS, y = Temp)) +
+  geom_point() +
+  ggtitle("Temperature for Sepsis Patients")
+ggplot(sepsis, aes(x = ICULOS, y = Resp, group = PatientID)) +
+  geom_point() +
+  ggtitle("Respiratory Rate for Sepsis Patients")
+ggplot(sepsis, aes(x = ICULOS, y = HR, group = PatientID)) +
+  geom_point() +
+  ggtitle("Heart Rate for Sepsis Patients")
+```
+
+####  
