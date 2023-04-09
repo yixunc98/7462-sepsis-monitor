@@ -1,0 +1,19 @@
+name: ICU Status Report
+on:
+  schedule:
+    - cron: '0 * * * *'
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      run: |
+    - name: Deploy HTML report
+      uses: action/upload-artifact@v2
+      with:
+        name: ICU Status Report
+        path: report.html
