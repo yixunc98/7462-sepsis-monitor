@@ -52,15 +52,41 @@ table1
 #### Plots for all patients who have sepsis (if any) that show the complete history of their heart rate, temperature, and respiratory rate during their time in the ICU. 
 
 ```{r}
-ggplot(sepsis, aes(x = ICULOS, y = Temp)) +
-  geom_point() +
-  ggtitle("Temperature for Sepsis Patients")
-ggplot(sepsis, aes(x = ICULOS, y = Resp, group = PatientID)) +
-  geom_point() +
-  ggtitle("Respiratory Rate for Sepsis Patients")
-ggplot(sepsis, aes(x = ICULOS, y = HR, group = PatientID)) +
-  geom_point() +
-  ggtitle("Heart Rate for Sepsis Patients")
+sepsis_all <- new_data %>% 
+  group_by(new_data$PatientID) %>%
+  subset(new_data$SepsisLabel == 1) 
+sepsis_all %>%
+  ggplot() +
+  geom_line(aes(x = ICULOS, y = HR, group = PatientID,
+                color = "red"), alpha = 1.0) +
+  labs(x = "Time ",
+       y = "Heart Rate",
+       color = "PatientID",
+       title = "Heart Rate for Septic Patients")
+sepsis_all %>%
+  ggplot() +
+  geom_line(aes(x = ICULOS, y = Resp, group = PatientID,
+                color = "green"), alpha = 1.0) +
+  labs(x = "Time in ICU",
+       y = "Respiratory Rate",
+       color = "PatientID",
+       title = "Respiratory Rate for Septic Patients")
+sepsis_all %>%
+  ggplot() +
+  geom_line(aes(x = ICULOS, y = Temp, group = PatientID,
+                color = PatientID), alpha = 1.0) +
+  labs(x = "Time (Hours) in ICU",
+       y = "Temperature",
+       title = "Temperature for Septic Patients") 
+ 
 ```
 
-####  
+#### A table showing the *change* in heart rate, temperature, and respiratory rate between the last two measurements for all patients
+
+```{r}
+sepsis_change <- sepsis_all %>% 
+  slice_tail(n = 2) %>% 
+  summarise( HR_change = last(HR) - first(HR), Temp_change = last(Temp) - first(Temp), Resp_change = last(Resp) - first(Resp) ) 
+
+sepsis_change %>% kable()
+```
