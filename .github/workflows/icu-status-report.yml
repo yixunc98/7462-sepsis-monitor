@@ -49,11 +49,9 @@ jobs:
                any::osmdata
       - name: Render document
         uses: quarto-dev/quarto-actions/render@v2
-        env:
-          MAPS_API_KEY: ${{ secrets.MAPS_API_KEY }}
         with:
           to: html
-          path: Report .qmd
+          path: Report.qmd
       - name: Setup git config
         run: |
           git config user.name "GitHub Actions Bot"
