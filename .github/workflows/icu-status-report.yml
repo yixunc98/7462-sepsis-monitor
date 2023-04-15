@@ -1,15 +1,15 @@
 
-   on:
+ on:
   schedule:
     - cron:  '0 * * * *'
   push:
     branches: main
   workflow_dispatch:
 
-name: Render Report
+ name: Render Report
 
 
-jobs:
+ jobs:
   build-deploy:
     runs-on: ubuntu-latest
     
