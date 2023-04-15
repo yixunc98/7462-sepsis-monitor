@@ -1,12 +1,13 @@
 
-on:
+   on:
   schedule:
-    - cron: '0 * * * *'
+    - cron:  '0 * * * *'
   push:
     branches: main
   workflow_dispatch:
 
 name: Render Report
+
 
 jobs:
   build-deploy:
@@ -31,7 +32,7 @@ jobs:
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
             packages:
-               any::tidyverse
+                any::tidyverse
                any::leaflet
                any::ggplot2
                any::lubridate
@@ -47,11 +48,13 @@ jobs:
                any::tidycensus
                any::janitor
                any::osmdata
+
       - name: Render document
         uses: quarto-dev/quarto-actions/render@v2
         with:
           to: html
           path: Report.qmd
+
       - name: Setup git config
         run: |
           git config user.name "GitHub Actions Bot"
